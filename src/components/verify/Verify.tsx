@@ -35,7 +35,7 @@ const Verify: React.FC<Props> = ({ email, setIsWelcomePage }) => {
 
   useEffect(() => {
     if (email) {
-      const timer: NodeJS.Timeout | null =
+      const timer =
         counter > 0 ? setInterval(() => setCounter(counter - 1), 1000) : null;
 
       return () => {
