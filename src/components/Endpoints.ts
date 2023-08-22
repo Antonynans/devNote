@@ -1,4 +1,4 @@
-const base = "http://localhost:8000/";
+const base = "https://devnote-backend-jno6.onrender.com/";
 
 export const Endpoints = {
   logout: base + "api/logout",
