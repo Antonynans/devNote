@@ -107,7 +107,7 @@ export default function Home() {
             </div>
             <section className="px-6">
               {notes.length > 0 ? (
-                <Notes notes={notes} onDelete={deleteNotes} />
+                <Notes notes={notes} onDelete={deleteNotes} getForm={getForm} />
               ) : (
                 <div className="flex justify-center items-center h-40">
                   <p className="text-center">No items to display</p>

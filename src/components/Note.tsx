@@ -13,9 +13,11 @@ interface Props {
     updatedAt?: string;
   };
   onDelete: (id: string | undefined) => void;
+  getForm: () => void;
+
 }
 
-const Note: React.FC<Props> = ({ note, onDelete }) => {
+const Note: React.FC<Props> = ({ note, onDelete, getForm }) => {
   const [editModal, setEditModal] = useState(false);
 
   const openEditModal = () => {
@@ -137,9 +139,7 @@ const Note: React.FC<Props> = ({ note, onDelete }) => {
           setModal={setEditModal}
           isEdit={true}
           note={note}
-          getForm={function (): void {
-            throw new Error("Function not implemented.");
-          }}
+          getForm={getForm}
         />
       </Modal>
     </div>

@@ -13,9 +13,10 @@ interface Note {
 interface Props {
   notes: Note[];
   onDelete: (id: string | undefined) => void;
+  getForm: () => void;
 }
 
-const Notes: React.FC<Props> = ({ notes, onDelete }) => {
+const Notes: React.FC<Props> = ({ notes, onDelete, getForm }) => {
   const [currentPage, setCurrentPage] = useState<number>(0);
 
   const PER_PAGE: number = 3;
@@ -32,7 +33,7 @@ const Notes: React.FC<Props> = ({ notes, onDelete }) => {
       <div className="flex flex-col ">
         {notes.slice(offset, offset + PER_PAGE).map((item: Note) => (
           <div key={item._id}>
-            <Note note={item} onDelete={onDelete} />
+            <Note note={item} onDelete={onDelete} getForm={getForm} />
           </div>
         ))}
       </div>

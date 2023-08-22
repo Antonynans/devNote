@@ -57,7 +57,7 @@ const AddNotes: React.FC<Props> = ({ getForm, setModal, isEdit, note }) => {
     } else {
       try {
         await axios
-          .put(`${Endpoints.update_form}/${note?._id}`, newNotes)
+          .patch(`${Endpoints.update_form}/${note?._id}`, newNotes)
           .then((res) => {
             console.log(res.data);
             getForm();

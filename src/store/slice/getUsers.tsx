@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const getUsersSlice = createSlice({
   name: "users",
   initialState: { 
-    authId: "",
+    token: "",
     user: {
       _id: "",
       email: "",
@@ -11,6 +11,7 @@ const getUsersSlice = createSlice({
       lastname: "",
       picture: "",
       username: "",
+      
     },
   },
 

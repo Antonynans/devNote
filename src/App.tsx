@@ -13,7 +13,7 @@ interface ProtectedRouteProps {
 }
 
 function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const isAuthenticated = useSelector((state: RootState) => state.users.authId);
+  const isAuthenticated = useSelector((state: RootState) => state.users.token);
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }

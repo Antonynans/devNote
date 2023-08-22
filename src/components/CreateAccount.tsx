@@ -2,7 +2,7 @@ import { useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Endpoints } from "./Endpoints";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 interface Props {
   setIsverify: React.Dispatch<React.SetStateAction<boolean>>;
@@ -19,33 +19,40 @@ const CreateAccount: React.FC<Props> = ({ setIsverify, setEmail }) => {
     password: "",
   });
 
-  // const navigate = useNavigate();
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputs({ ...inputs, [e.target.id]: e.target.value });
   };
 
-  console.log(inputs.email, "emails");
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post(Endpoints.signup, inputs).then((res) => {
-        console.log(res.data);
+      await axios.post(Endpoints.signup, inputs).then(() => {
         setLoading(false);
         setIsverify(true);
         setEmail(inputs.email);
         toast.success("Check email address for OTP");
       });
     } catch (err) {
-      console.log(err);
+      if (axios.isAxiosError(err)) {
+        console.error(err);
+
+        if (err.response?.data?.message) {
+          toast.error(err.response.data.message);
+        }
+      } else {
+        console.error(err);
+      }
       setLoading(false);
     }
   };
 
   return (
     <>
+          <ToastContainer position="top-right" />
+
       <div className="mt-12">
         <img src="/hero.svg" alt="" className="w-full" />
         <p className="text-lg roboto text-center">Sign up</p>
