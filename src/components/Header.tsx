@@ -97,7 +97,7 @@ const Header = () => {
         <span className="flex items-center mt-8 justify-between px-4">
           <div className="flex items-center gap-4">
             <img src={book} alt="book" className="w-7 h-7" />
-            <p>Notes by {userDetails?.user?.username}</p>
+            <p>Notes by {userData?.username}</p>
           </div>
           <div className=" flex items-center gap-3 relative">
             <Menu as="div" className=" inline-block text-right w-full">

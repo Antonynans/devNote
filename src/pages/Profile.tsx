@@ -114,8 +114,6 @@ const Profile = () => {
         await axios
           .patch(`${Endpoints.update_users}/${userDetails.user?._id}`, data)
           .then((res) => {
-            console.log(res.data);
-            // getForm();
             setUserData(res.data);
             toast.success(
               "You have successfully updated your profile picture!"
