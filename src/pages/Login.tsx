@@ -1,14 +1,15 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUsers } from "../store/slice/getUsers";
 import { Endpoints } from "../components/Endpoints";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { object, string, TypeOf } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import FormInputs from "../components/FormInputs";
+import { RootState } from "../store/Store";
+import { getloaderstate } from "../store/slice/loaderstate";
 
 const loginSchema = object({
   email: string()
@@ -23,8 +24,7 @@ const loginSchema = object({
 export type LoginInput = TypeOf<typeof loginSchema>;
 
 export default function Login() {
-  const [loading, setLoading] = useState(false);
-
+  const loading = useSelector((state: RootState) => state.loaderslice);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -35,13 +35,11 @@ export default function Login() {
   const { handleSubmit } = methods;
 
   const onSubmitHandler: SubmitHandler<LoginInput> = (values) => {
-    setLoading(true);
-
+    dispatch(getloaderstate(true));
     try {
       axios.post(Endpoints.login, values).then((res) => {
         dispatch(getUsers(res.data));
         navigate("/");
-        setLoading(false);
         toast.success("Login successful!!");
       });
     } catch (err) {
@@ -55,14 +53,15 @@ export default function Login() {
         console.error(err);
       }
     } finally {
-      setLoading(false);
+      dispatch(getloaderstate(false));
     }
   };
 
+  console.log(loading, 'loading');
+  
+
   return (
     <>
-      <ToastContainer position="top-right" />
-
       <div className="w-full h-screen flex justify-center bg-[#E5E5E5]">
         <main className="w-[500px] bg-white px-6 overflow-y-scroll pb-20">
           <header className="flex items-center gap-4 mt-12">

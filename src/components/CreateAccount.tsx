@@ -1,12 +1,14 @@
-import { useState } from "react";
 import axios from "axios";
 import { Endpoints } from "./Endpoints";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { object, string, TypeOf } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import FormInputs from "./FormInputs";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store/Store";
+import { getloaderstate } from "../store/slice/loaderstate";
 
 interface Props {
   setIsverify: React.Dispatch<React.SetStateAction<boolean>>;
@@ -32,7 +34,9 @@ const registerSchema = object({
 export type RegisterInput = TypeOf<typeof registerSchema>;
 
 const CreateAccount: React.FC<Props> = ({ setIsverify, setEmail }) => {
-  const [loading, setLoading] = useState(false);
+  const loading = useSelector((state: RootState) => state.loaderslice);
+
+  const dispatch = useDispatch();
 
   const methods = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
@@ -43,10 +47,9 @@ const CreateAccount: React.FC<Props> = ({ setIsverify, setEmail }) => {
   const { handleSubmit } = methods;
 
   const onSubmitHandler: SubmitHandler<RegisterInput> = (values) => {
-    setLoading(true);
+    dispatch(getloaderstate(true));
     try {
       axios.post(Endpoints.signup, values).then(() => {
-        setLoading(false);
         setIsverify(true);
         setEmail(values.email);
         toast.success("Check email address for OTP");
@@ -61,14 +64,13 @@ const CreateAccount: React.FC<Props> = ({ setIsverify, setEmail }) => {
       } else {
         console.error(err);
       }
-      setLoading(false);
+    } finally {
+      dispatch(getloaderstate(false));
     }
   };
 
   return (
     <>
-      <ToastContainer position="top-right" />
-
       <div className="mt-12">
         <img src="/hero.svg" alt="" className="w-full" />
         <p className="text-lg roboto text-center">Sign up</p>

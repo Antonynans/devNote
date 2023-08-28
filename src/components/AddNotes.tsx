@@ -1,7 +1,7 @@
 import { FormEvent, useState } from "react";
 import line from "/line.svg";
 import { ChangeEvent } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import axios from "axios";
 import { Endpoints } from "./Endpoints";
 
@@ -73,7 +73,6 @@ const AddNotes: React.FC<Props> = ({ getForm, setModal, isEdit, note }) => {
 
   return (
     <>
-      <ToastContainer position="top-right" />
       <form onSubmit={handleSubmit} className="">
         <div className="">
           <input

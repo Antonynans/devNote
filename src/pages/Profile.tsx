@@ -1,5 +1,5 @@
 import React from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { ChangeEvent, useState, FormEvent } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -125,8 +125,6 @@ const Profile = () => {
     }
   };
 
-  
-
   const ButtonDiv: React.FC<ButtonDivProps> = ({ name }) => {
     return (
       <button
@@ -160,7 +158,6 @@ const Profile = () => {
 
   return (
     <>
-      <ToastContainer position="top-right" />
       <div className="w-full h-screen flex justify-center bg-[#E5E5E5]">
         <div className="flex flex-col h-screen relative w-[500px] bg-white overflow-y-auto pb-20 px-8">
           <header className="flex items-center ">

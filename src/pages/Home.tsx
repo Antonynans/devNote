@@ -4,7 +4,7 @@ import AddNotes from "../components/AddNotes";
 import Notes from "../components/Notes";
 import axios from "axios";
 import Loader from "../components/whiteloader";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import Header from "../components/Header";
 import { Endpoints } from "../components/Endpoints";
 
@@ -89,8 +89,6 @@ export default function Home() {
 
   return (
     <>
-      <ToastContainer position="top-right" />
-
       {notes ? (
         <div className="w-full h-screen flex justify-center bg-[#E5E5E5]">
           <main className="flex flex-col h-screen relative w-[500px] bg-white overflow-y-auto pb-20">

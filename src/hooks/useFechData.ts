@@ -1,7 +1,15 @@
 import { useState, useEffect } from 'react';
 import { UserData } from "../models/UserData";
-import { Endpoints } from "../components/Endpoints";
+import { Endpoints, authApi } from "../components/Endpoints";
 import axios from 'axios';
+
+// export const authApi = axios.create({
+//   baseURL: Endpoints,
+//   withCredentials: true,
+// });
+
+authApi.defaults.headers.common['Content-Type'] = 'application/json';
+
 
 export const useFetchUserData = (userDetails: { user: { _id: string; }; }) => {
   const [userData, setUserData] = useState<UserData | undefined>(undefined);
@@ -9,11 +17,11 @@ export const useFetchUserData = (userDetails: { user: { _id: string; }; }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userdata = await axios(
+        const response = await axios(
           `${Endpoints.getUsersById}/${userDetails.user?._id}`,
         );
 
-        setUserData(userdata.data);
+        setUserData(response.data);
       } catch (err) {
         console.log(err);
       }

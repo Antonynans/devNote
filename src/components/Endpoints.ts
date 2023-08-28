@@ -1,4 +1,12 @@
+import axios from "axios";
+
 const base = "https://devnote-backend-jno6.onrender.com/";
+
+export const authApi = axios.create({
+  baseURL: base,
+  withCredentials: true,
+});
+
 
 export const Endpoints = {
   logout: base + "api/logout",
