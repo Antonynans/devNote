@@ -1,38 +1,54 @@
 import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Endpoints } from "./Endpoints";
 import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { object, string, TypeOf } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
+import FormInputs from "./FormInputs";
 
 interface Props {
   setIsverify: React.Dispatch<React.SetStateAction<boolean>>;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
 }
 
+const registerSchema = object({
+  username: string().min(1, "Username is required").max(100),
+  fullname: string().min(1, "Name is required").max(100),
+  email: string()
+    .min(1, "Email address is required")
+    .email("Email Address is invalid"),
+  password: string()
+    .min(1, "Password is required")
+    .min(8, "Password must be more than 8 characters")
+    .max(32, "Password must be less than 32 characters"),
+  passwordConfirm: string().min(1, "Please confirm your password"),
+}).refine((data) => data.password === data.passwordConfirm, {
+  path: ["passwordConfirm"],
+  message: "Passwords do not match",
+});
+
+export type RegisterInput = TypeOf<typeof registerSchema>;
+
 const CreateAccount: React.FC<Props> = ({ setIsverify, setEmail }) => {
   const [loading, setLoading] = useState(false);
 
-  const [inputs, setInputs] = useState({
-    email: "",
-    firstname: "",
-    lastname: "",
-    password: "",
+  const methods = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
   });
 
+  const navigate = useNavigate();
 
-  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputs({ ...inputs, [e.target.id]: e.target.value });
-  };
+  const { handleSubmit } = methods;
 
-
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmitHandler: SubmitHandler<RegisterInput> = (values) => {
     setLoading(true);
     try {
-      await axios.post(Endpoints.signup, inputs).then(() => {
+      axios.post(Endpoints.signup, values).then(() => {
         setLoading(false);
         setIsverify(true);
-        setEmail(inputs.email);
+        setEmail(values.email);
         toast.success("Check email address for OTP");
       });
     } catch (err) {
@@ -51,61 +67,45 @@ const CreateAccount: React.FC<Props> = ({ setIsverify, setEmail }) => {
 
   return (
     <>
-          <ToastContainer position="top-right" />
+      <ToastContainer position="top-right" />
 
       <div className="mt-12">
         <img src="/hero.svg" alt="" className="w-full" />
         <p className="text-lg roboto text-center">Sign up</p>
       </div>
 
-      <form onSubmit={onSubmit} className="flex flex-col gap-4 mt-12">
-        <input
-          type="text"
-          placeholder="First name"
-          id="firstname"
-          onChange={onChangeHandler}
-          required
-          className="h-14 border border-[#FB6900] rounded-[5px] outline-none px-6"
-        />
-        <input
-          type="text"
-          placeholder="Last name"
-          id="lastname"
-          onChange={onChangeHandler}
-          required
-          className="h-14 border border-[#FB6900] rounded-[5px] outline-none px-6"
-        />
-        <input
-          type="email"
-          id="email"
-          placeholder="Email address"
-          onChange={onChangeHandler}
-          required
-          className="h-14 border border-[#FB6900] rounded-[5px] outline-none px-6"
-        />
-        <input
-          type="password"
-          value={inputs.password}
-          id="password"
-          placeholder="Password"
-          onChange={onChangeHandler}
-          required
-          className="h-14 border border-[#FB6900] rounded-[5px] outline-none px-6"
-        />
-        <button
-          disabled={loading}
-          className={`bg-[#FB6900] text-white text-lg h-14 rounded-[5px] roboto" ${
-            loading && "opacity-50"
-          }`}
+      <FormProvider {...methods}>
+        <form
+          onSubmit={handleSubmit(onSubmitHandler)}
+          className="flex flex-col gap-4 mt-12"
         >
-          Sign up
-        </button>
-      </form>
+          <FormInputs label="User Name" name="username" />
+          <FormInputs label="Full Name" name="fullname" />
+          <FormInputs label="Email" name="email" type="email" />
+          <FormInputs label="Password" name="password" type="password" />
+          <FormInputs
+            label="Confirm Password"
+            name="passwordConfirm"
+            type="password"
+          />
+          <button
+            disabled={loading}
+            className={`bg-[#FB6900] text-white text-lg h-14 rounded-[5px] roboto" ${
+              loading && "opacity-50"
+            }`}
+          >
+            Sign up
+          </button>
+        </form>
+      </FormProvider>
 
       <div className="flex justify-center items-center">
-        <a href="/login" className="roboto text-[#FB6900] text-center mt-4">
+        <p
+          className="roboto text-[#FB6900] text-center mt-4 cursor-pointer"
+          onClick={() => navigate("/login")}
+        >
           Registered? Login here
-        </a>
+        </p>
       </div>
     </>
   );

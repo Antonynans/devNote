@@ -1,36 +1,44 @@
-import { useState, ChangeEvent } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { getUsers } from "../store/slice/getUsers";
 import { Endpoints } from "../components/Endpoints";
 import { ToastContainer, toast } from "react-toastify";
+import { object, string, TypeOf } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
+import FormInputs from "../components/FormInputs";
+
+const loginSchema = object({
+  email: string()
+    .min(1, "Email address is required")
+    .email("Email Address is invalid"),
+  password: string()
+    .min(1, "Password is required")
+    .min(8, "Password must be more than 8 characters")
+    .max(32, "Password must be less than 32 characters"),
+});
+
+export type LoginInput = TypeOf<typeof loginSchema>;
 
 export default function Login() {
   const [loading, setLoading] = useState(false);
-  const [inputs, setInputs] = useState({
-    email: "",
-    password: "",
-  });
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setInputs({ ...inputs, [e.target.id]: e.target.value });
-  };
+  const methods = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+  });
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const { handleSubmit } = methods;
+
+  const onSubmitHandler: SubmitHandler<LoginInput> = (values) => {
     setLoading(true);
 
-    const data = {
-      email: inputs.email,
-      password: inputs.password,
-    };
-
     try {
-      await axios.post(Endpoints.login, data).then((res) => {
+      axios.post(Endpoints.login, values).then((res) => {
         dispatch(getUsers(res.data));
         navigate("/");
         setLoading(false);
@@ -46,6 +54,7 @@ export default function Login() {
       } else {
         console.error(err);
       }
+    } finally {
       setLoading(false);
     }
   };
@@ -66,41 +75,32 @@ export default function Login() {
             <p className="text-lg roboto text-center">Log in</p>
           </div>
 
-          <form onSubmit={onSubmit} className="flex flex-col gap-4 mt-12">
-            <input
-              type="email"
-              placeholder="Email address"
-              id="email"
-              onChange={onChangeHandler}
-              required
-              className="h-14 border border-[#FB6900] rounded-[5px] outline-none px-6"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              onChange={onChangeHandler}
-              id="password"
-              required
-              minLength={8}
-              className="h-14 border border-[#FB6900] rounded-[5px] outline-none px-6"
-            />
-            <button
-              disabled={loading}
-              className={`bg-[#FB6900] text-white text-lg h-14 rounded-[5px] roboto" ${
-                loading && "opacity-50"
-              }`}
+          <FormProvider {...methods}>
+            <form
+              onSubmit={handleSubmit(onSubmitHandler)}
+              className="flex flex-col gap-4 mt-12"
             >
-              Log in
-            </button>
-          </form>
+              <FormInputs label="Email" name="email" type="email" />
+              <FormInputs label="Password" name="password" type="password" />
+
+              <button
+                disabled={loading}
+                className={`bg-[#FB6900] text-white text-lg h-14 rounded-[5px] roboto" ${
+                  loading && "opacity-50"
+                }`}
+              >
+                Log in
+              </button>
+            </form>
+          </FormProvider>
 
           <div className="flex justify-center items-center">
-            <a
-              href="/signup"
-              className="roboto text-[#FB6900] text-center mt-4"
+            <p
+              className="roboto text-[#FB6900] text-center mt-4 cursor-pointer"
+              onClick={() => navigate("/signup")}
             >
               Not registered? Sign up here
-            </a>
+            </p>
           </div>
         </main>
       </div>
