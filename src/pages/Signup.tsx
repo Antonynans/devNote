@@ -5,6 +5,7 @@ import Verify from "../components/verify";
 export default function Signup() {
   const [isVerify, setIsVerify] = useState(false);
   const [email, setEmail] = useState("");
+console.log(email,'email');
 
   return (
     <div className="w-full h-screen flex justify-center bg-[#E5E5E5] ">

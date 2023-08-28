@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { getUsers } from "../store/slice/getUsers";
-import { Endpoints } from "../components/Endpoints";
+import { loginUserFn } from "../components/Endpoints";
 import { toast } from "react-toastify";
 import { object, string, TypeOf } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +10,7 @@ import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import FormInputs from "../components/FormInputs";
 import { RootState } from "../store/Store";
 import { getloaderstate } from "../store/slice/loaderstate";
+import { useMutation } from "@tanstack/react-query";
 
 const loginSchema = object({
   email: string()
@@ -34,31 +35,38 @@ export default function Login() {
 
   const { handleSubmit } = methods;
 
-  const onSubmitHandler: SubmitHandler<LoginInput> = (values) => {
-    dispatch(getloaderstate(true));
-    try {
-      axios.post(Endpoints.login, values).then((res) => {
-        dispatch(getUsers(res.data));
+  const { mutate: loginUser } = useMutation(
+    (userData: LoginInput) => loginUserFn(userData),
+    {
+      onMutate() {
+        dispatch(getloaderstate(true));
+      },
+      onSuccess(data) {
+        dispatch(getloaderstate(false));
+        dispatch(getUsers(data));
         navigate("/");
         toast.success("Login successful!!");
-      });
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        console.error(err);
+      },
+      onError(err) {
+        if (axios.isAxiosError(err)) {
+          console.error(err);
 
-        if (err.response?.data?.message) {
-          toast.error(err.response.data.message);
+          if (err.response?.data?.message) {
+            toast.error(err.response.data.message);
+          }
+        } else {
+          console.error(err);
         }
-      } else {
-        console.error(err);
-      }
-    } finally {
-      dispatch(getloaderstate(false));
+      },
+      onSettled() {
+        dispatch(getloaderstate(false));
+      },
     }
-  };
+  );
 
-  console.log(loading, 'loading');
-  
+  const onSubmitHandler: SubmitHandler<LoginInput> = (values) => {
+    loginUser(values);
+  };
 
   return (
     <>

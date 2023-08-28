@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Endpoints } from "./Endpoints";
+import { createAccountFn } from "./Endpoints";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { object, string, TypeOf } from "zod";
@@ -9,6 +9,7 @@ import FormInputs from "./FormInputs";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/Store";
 import { getloaderstate } from "../store/slice/loaderstate";
+import { useMutation } from "@tanstack/react-query";
 
 interface Props {
   setIsverify: React.Dispatch<React.SetStateAction<boolean>>;
@@ -46,27 +47,39 @@ const CreateAccount: React.FC<Props> = ({ setIsverify, setEmail }) => {
 
   const { handleSubmit } = methods;
 
-  const onSubmitHandler: SubmitHandler<RegisterInput> = (values) => {
-    dispatch(getloaderstate(true));
-    try {
-      axios.post(Endpoints.signup, values).then(() => {
+  const { mutate: registerUser } = useMutation(
+    (userData: RegisterInput) => createAccountFn(userData),
+    {
+      onMutate() {
+        dispatch(getloaderstate(true));
+      },
+      onSuccess(data) {
+        dispatch(getloaderstate(false));
         setIsverify(true);
-        setEmail(values.email);
+        console.log(data, 'data');
+        
+        setEmail(data?.user?.email);
         toast.success("Check email address for OTP");
-      });
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        console.error(err);
+      },
+      onError(err) {
+        if (axios.isAxiosError(err)) {
+          console.error(err);
 
-        if (err.response?.data?.message) {
-          toast.error(err.response.data.message);
+          if (err.response?.data?.message) {
+            toast.error(err.response.data.message);
+          }
+        } else {
+          console.error(err);
         }
-      } else {
-        console.error(err);
-      }
-    } finally {
-      dispatch(getloaderstate(false));
+      },
+      onSettled() {
+        dispatch(getloaderstate(false));
+      },
     }
+  );
+
+  const onSubmitHandler: SubmitHandler<RegisterInput> = (values) => {
+    registerUser(values);
   };
 
   return (
