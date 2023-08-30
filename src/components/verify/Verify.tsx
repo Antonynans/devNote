@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { Endpoints } from "../Endpoints";
+import { verifyUserFn } from "../Endpoints";
+import { useMutation } from "@tanstack/react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { getloaderstate } from "../../store/slice/loaderstate";
+import { VerifyInputs } from "../../types";
+import { RootState } from "../../store/Store";
 
 interface Props {
   email: string;
@@ -10,11 +15,13 @@ interface Props {
 
 const Verify: React.FC<Props> = ({ email, setIsWelcomePage }) => {
   const [counter, setCounter] = useState<number>(120);
-  const [loading, setLoading] = useState(false);
   const [disableInput, setDisableInput] = useState(false);
 
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const otpData = otp.join("");
+
+  const loading = useSelector((state: RootState) => state.loaderslice);
+  const dispatch = useDispatch();
 
   const handleChangeOtp = (
     element: HTMLInputElement,
@@ -48,42 +55,53 @@ const Verify: React.FC<Props> = ({ email, setIsWelcomePage }) => {
 
   const retryConfirmVerify = () => {
     setOtp(new Array(6).fill(""));
-    setLoading(true);
+    dispatch(getloaderstate(true));
 
     setCounter(120);
   };
 
-  useEffect(() => {
-    const handleSubmitVerifyAccount = async () => {
-      if (otpData.length === 6) {
+  const { mutate: verifyUser } = useMutation(
+    (userData: VerifyInputs) => verifyUserFn(userData),
+    {
+      onMutate() {
+        dispatch(getloaderstate(true));
         setDisableInput(true);
-        setLoading(true);
+      },
+      onSuccess(data) {
+        dispatch(getloaderstate(false));
+        toast.success(data.message);
+        setDisableInput(false);
+        setIsWelcomePage(true);
+      },
+      onError(err) {
+        if (axios.isAxiosError(err)) {
+          console.error(err);
 
-        const data = {
-          otp: otpData,
-          email: email,
-        };
-        try {
-          await axios
-            .post(Endpoints.verifyOtp, data)
-            .then((res) => {
-              toast.success(res.data.message);
-              setLoading(false);
-              setDisableInput(false);
-              setIsWelcomePage(true);
-            })
-            .catch((err) => {
-              toast.error(err.response?.data?.message);
-              setLoading(false);
-              setDisableInput(false);
-            });
-        } catch (error) {
-          console.log(error);
+          if (err.response?.data?.message) {
+            toast.error(err.response.data.message);
+          }
+        } else {
+          console.error(err);
         }
-      }
+      },
+      onSettled() {
+        dispatch(getloaderstate(false));
+        setDisableInput(false);
+      },
+    }
+  );
+
+  useEffect(() => {
+    const data = {
+      otp: otpData,
+      email: email,
     };
-    handleSubmitVerifyAccount();
-  }, [email, otpData]);
+    console.log(data, "data");
+
+    if (otpData.length === 6) {
+      verifyUser(data);
+    }
+  }, [email, otpData, verifyUser]);
 
   return (
     <>
