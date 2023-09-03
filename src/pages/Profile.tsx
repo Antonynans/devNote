@@ -10,7 +10,7 @@ import emptyImage from "/noImg.svg";
 import { useNavigate } from "react-router-dom";
 import { Endpoints } from "../components/Endpoints";
 import { UserData } from "../models/UserData";
-import { useFetchUserData } from "../hooks/useFechData";
+import { useFetchUserData } from "../hooks/useFetchData";
 import book from "/book.svg";
 
 interface ButtonDivProps {

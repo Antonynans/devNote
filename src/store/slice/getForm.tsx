@@ -6,7 +6,6 @@ interface Note {
   description: string;
   createdAt: string;
   updatedAt: string;
-  __v: number;
 }
 const initialState: Note[] = [];
 

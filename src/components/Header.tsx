@@ -9,7 +9,7 @@ import axios from "axios";
 import storage from "redux-persist/lib/storage";
 import { useNavigate } from "react-router-dom";
 import { Endpoints } from "./Endpoints";
-import { useFetchUserData } from "../hooks/useFechData";
+import { useFetchUserData } from "../hooks/useFetchData";
 
 const Header = () => {
   const userDetails = useSelector((state: RootState) => state.users);

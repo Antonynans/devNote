@@ -2,16 +2,14 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const getUsersSlice = createSlice({
   name: "users",
-  initialState: { 
+  initialState: {
     token: "",
     user: {
       _id: "",
       email: "",
-      firstname: "",
-      lastname: "",
+      fullname: "",
       picture: "",
       username: "",
-      
     },
   },
 
