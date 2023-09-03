@@ -6,7 +6,6 @@ import { FormInput } from "./AddNotes";
 import { UserData } from "../models/UserData";
 
 const base = "https://devnote-backend-jno6.onrender.com/api/";
-// const base = "http://localhost:8000/api/";
 
 const getToken = sessionStorage.getItem("saved_devnote");
 
@@ -43,6 +42,18 @@ export const verifyUserFn = async (user: VerifyInputs) => {
 
 export const getForm = async () => {
   const response = await authApi.get<Note>('getForm', 
+  {
+    headers: {
+      Authorization: `Bearer ${getToken}`,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    }}
+  );
+  return response.data;
+};
+
+export const getFormById = async (userId: string) => {
+  const response = await authApi.get<Note>(`forms/${userId}`, 
   {
     headers: {
       Authorization: `Bearer ${getToken}`,

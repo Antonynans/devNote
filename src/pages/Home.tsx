@@ -6,7 +6,7 @@ import axios from "axios";
 import Loader from "../components/whiteloader";
 import { toast } from "react-toastify";
 import Header from "../components/Header";
-import { Endpoints, getForm } from "../components/Endpoints";
+import { Endpoints, getFormById } from "../components/Endpoints";
 import { useQuery } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { getForms } from "../store/slice/getForm";
@@ -25,6 +25,7 @@ export default function Home() {
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
 
   const notes = useSelector((state: RootState) => state.forms);
+  const userDetails = useSelector((state: RootState) => state.users);
 
   const [modal, setModal] = useState(false);
 
@@ -54,23 +55,32 @@ export default function Home() {
     }
   };
 
-  const { isLoading, isError } = useQuery(["getData"], getForm, {
-    onSuccess(data: [Note]) {
-      dispatch(getForms(data));
-      setFilteredNotes(data);
-    },
-    onError(err) {
-      if (axios.isAxiosError(err)) {
-        console.error(err);
+  const userId = userDetails.user?._id;
 
-        if (err.response?.data?.message) {
-          toast.error(err.response.data.message);
+  const data = getFormById(userId);
+  console.log(data);
+
+  const { isLoading, isError } = useQuery(
+    ["getData", userId],
+    () => getFormById(userId),
+    {
+      onSuccess: (data: [Note]) => {
+        dispatch(getForms(data));
+        setFilteredNotes(data);
+      },
+      onError: (err) => {
+        if (axios.isAxiosError(err)) {
+          console.error(err);
+
+          if (err.response?.data?.message) {
+            toast.error(err.response.data.message);
+          }
+        } else {
+          console.error(err);
         }
-      } else {
-        console.error(err);
-      }
-    },
-  });
+      },
+    }
+  );
 
   const deleteNotes = async (id: string | undefined) => {
     try {

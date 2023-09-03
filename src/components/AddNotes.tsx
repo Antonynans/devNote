@@ -7,8 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { object, string, TypeOf } from "zod";
 import FormInputs from "./FormInputs";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getloaderstate } from "../store/slice/loaderstate";
+import { RootState } from "../store/Store";
 
 interface Props {
   setModal: (modal: boolean) => void;
@@ -19,6 +20,7 @@ interface Props {
 const formSchema = object({
   title: string().min(1, "Title is required").max(100),
   description: string().min(1, "Description is required"),
+  userId: string().optional(),
 });
 
 export type FormInput = TypeOf<typeof formSchema>;
@@ -27,6 +29,8 @@ const AddNotes: React.FC<Props> = ({ setModal, isEdit, noteId }) => {
   const queryClient = useQueryClient();
 
   const dispatch = useDispatch();
+  const userDetails = useSelector((state: RootState) => state.users);
+  const userId = userDetails.user?._id;
 
   const methods = useForm<FormInput>({
     resolver: zodResolver(formSchema),
@@ -93,7 +97,7 @@ const AddNotes: React.FC<Props> = ({ setModal, isEdit, noteId }) => {
   );
 
   const onSubmitHandler: SubmitHandler<FormInput> = (values) => {
-    const newNotes = { ...values };
+    const newNotes = { ...values, userId: userId };
     isEdit ? editForm(newNotes) : addForm(newNotes);
   };
 
