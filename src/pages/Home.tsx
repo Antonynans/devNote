@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import Modal from "react-modal";
 import AddNotes from "../components/AddNotes";
 import Notes from "../components/Notes";
@@ -6,25 +6,29 @@ import axios from "axios";
 import Loader from "../components/whiteloader";
 import { toast } from "react-toastify";
 import Header from "../components/Header";
-import { Endpoints } from "../components/Endpoints";
+import { Endpoints, getForm } from "../components/Endpoints";
+import { useQuery } from "@tanstack/react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { getForms } from "../store/slice/getForm";
+import { RootState } from "../store/Store";
 
 interface Note {
   _id: string;
   title: string;
   description: string;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }
+[];
 
 export default function Home() {
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
-  const [notes, setNotes] = useState<any>([]);
+
+  const notes = useSelector((state: RootState) => state.forms);
 
   const [modal, setModal] = useState(false);
 
-  const getToken = sessionStorage.getItem("saved_devnote");
-
-  console.log(notes, "user");
+  const dispatch = useDispatch();
 
   const openModal = () => {
     setModal(true);
@@ -44,43 +48,39 @@ export default function Home() {
           data.description?.toLowerCase().includes(keyword.toLowerCase())
         );
       });
-      setNotes(results);
+      dispatch(getForms(results));
     } else {
-      setNotes(filteredNotes);
+      dispatch(getForms(filteredNotes));
     }
   };
 
-  const getForm = () => {
-    try {
-      axios
-        .get(Endpoints.get_form, {
-          headers: {
-            Authorization: `Bearer ${getToken}`,
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        })
-        .then((res) => {
-          setNotes(res.data);
-          setFilteredNotes(res.data);
-        });
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const { isLoading, isError } = useQuery(["getData"], getForm, {
+    onSuccess(data: [Note]) {
+      dispatch(getForms(data));
+      setFilteredNotes(data);
+    },
+    onError(err) {
+      if (axios.isAxiosError(err)) {
+        console.error(err);
 
-  useEffect(getForm, []);
+        if (err.response?.data?.message) {
+          toast.error(err.response.data.message);
+        }
+      } else {
+        console.error(err);
+      }
+    },
+  });
 
   const deleteNotes = async (id: string | undefined) => {
     try {
       const deleteNotes = notes.filter(
         (note: { _id: string | undefined }) => note._id !== id
       );
-      setNotes(deleteNotes);
+      dispatch(getForms(deleteNotes));
       toast.success("You have successfully deleted a note!");
       await axios.delete(`${Endpoints.delete_form}/${id}`).then(() => {
         console.log("Form deleted successfully");
-        getForm();
       });
     } catch (err) {
       console.log(err);
@@ -89,42 +89,50 @@ export default function Home() {
 
   return (
     <>
-      {notes ? (
-        <div className="w-full h-screen flex justify-center bg-[#E5E5E5]">
-          <main className="flex flex-col h-screen relative w-[500px] bg-white overflow-y-auto pb-20">
-            <div>
-              <Header />
-
-              <div className="px-6 mt-4">
-                <input
-                  className="border border-[#FA9F5E] rounded-full h-14 w-full px-6 outline-none"
-                  placeholder="Search..."
-                  onChange={(event) => handleSearch(event)}
-                />
-              </div>
-            </div>
-            <section className="px-6">
-              {notes.length > 0 ? (
-                <Notes notes={notes} onDelete={deleteNotes} getForm={getForm} />
-              ) : (
-                <div className="flex justify-center items-center h-40">
-                  <p className="text-center">No items to display</p>
-                </div>
-              )}
-            </section>
-
-            <footer className="flex justify-end pr-6 ">
-              <button
-                className="rounded-full bg-[#FB6900] text-white w-12 h-12 flex justify-center items-center fixed bottom-24"
-                onClick={openModal}
-              >
-                <img src="/plus.svg" alt="" />
-              </button>
-            </footer>
-          </main>
+      {isError ? (
+        <div className="flex justify-center items-center h-40">
+          <p className="text-center">Error loading notes</p>
         </div>
       ) : (
-        <Loader />
+        <>
+          {!isLoading ? (
+            <div className="w-full h-screen flex justify-center bg-[#E5E5E5]">
+              <main className="flex flex-col h-screen relative w-[500px] bg-white overflow-y-auto pb-20">
+                <div>
+                  <Header />
+
+                  <div className="px-6 mt-4">
+                    <input
+                      className="border border-[#FA9F5E] rounded-full h-14 w-full px-6 outline-none"
+                      placeholder="Search..."
+                      onChange={(event) => handleSearch(event)}
+                    />
+                  </div>
+                </div>
+                <section className="px-6">
+                  {notes.length > 0 ? (
+                    <Notes notes={notes} onDelete={deleteNotes} />
+                  ) : (
+                    <div className="flex justify-center items-center h-40">
+                      <p className="text-center">No items to display</p>
+                    </div>
+                  )}
+                </section>
+
+                <footer className="flex justify-end pr-6 ">
+                  <button
+                    className="rounded-full bg-[#FB6900] text-white w-12 h-12 flex justify-center items-center fixed bottom-24"
+                    onClick={openModal}
+                  >
+                    <img src="/plus.svg" alt="" />
+                  </button>
+                </footer>
+              </main>
+            </div>
+          ) : (
+            <Loader />
+          )}
+        </>
       )}
 
       <Modal
@@ -144,12 +152,7 @@ export default function Home() {
         onRequestClose={closeModal}
         ariaHideApp={false}
       >
-        <AddNotes
-          getForm={getForm}
-          setModal={setModal}
-          isEdit={false}
-          note={notes}
-        />
+        <AddNotes setModal={setModal} isEdit={false} />
       </Modal>
     </>
   );

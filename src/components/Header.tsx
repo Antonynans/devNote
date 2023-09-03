@@ -110,7 +110,11 @@ const Header = () => {
                   />
                 ) : (
                   <div className="w-10 h-10 p-2 rounded-full bg-[#F2F2F2] flex items-center justify-center">
-                    <img src={emptyImage} alt="no image" className="w-full h-full" />
+                    <img
+                      src={emptyImage}
+                      alt="no image"
+                      className="w-full h-full"
+                    />
                   </div>
                 )}
               </Menu.Button>

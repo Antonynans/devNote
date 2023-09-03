@@ -4,16 +4,18 @@ import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 import thunk from "redux-thunk";
 import loaderslice from './slice/loaderstate';
+import getFormsSlice from './slice/getForm';
 
 const persistConfig = {
   key: "root",
   storage,
-  blacklist: ['loaderslice']
+  blacklist: ['loader', 'forms']
 };
 
 const rootReducer = combineReducers({
   users: getUsersSlice,
-  loaderslice: loaderslice,
+  forms: getFormsSlice,
+  loader: loaderslice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

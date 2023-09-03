@@ -6,18 +6,16 @@ import Modal from "react-modal";
 
 interface Props {
   note: {
-    _id?: string | undefined;
+    _id: string;
     title: string;
     description: string;
     createdAt: string;
-    updatedAt?: string;
+    updatedAt: string;
   };
   onDelete: (id: string | undefined) => void;
-  getForm: () => void;
-
 }
 
-const Note: React.FC<Props> = ({ note, onDelete, getForm }) => {
+const Note: React.FC<Props> = ({ note, onDelete }) => {
   const [editModal, setEditModal] = useState(false);
 
   const openEditModal = () => {
@@ -47,7 +45,7 @@ const Note: React.FC<Props> = ({ note, onDelete, getForm }) => {
         <p className="text-lg capitalize mb-6">{note.title}</p>
         <p className="roboto text-[#000000BA] font-light ">
           {" "}
-          {note.description.length > 140
+          {note.description?.length > 140
             ? `${note.description.substring(0, 140)}...`
             : note.description}
         </p>
@@ -135,12 +133,7 @@ const Note: React.FC<Props> = ({ note, onDelete, getForm }) => {
         onRequestClose={closeEditModal}
         ariaHideApp={false}
       >
-        <AddNotes
-          setModal={setEditModal}
-          isEdit={true}
-          note={note}
-          getForm={getForm}
-        />
+        <AddNotes setModal={setEditModal} isEdit={true} noteId={note._id} />
       </Modal>
     </div>
   );

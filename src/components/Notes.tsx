@@ -2,21 +2,18 @@ import { useState } from "react";
 import Note from "./Note";
 import ReactPaginate from "react-paginate";
 
-interface Note {
-  _id?: string | undefined;
-  title: string;
-  description: string;
-  createdAt: string;
-  updatedAt?: string;
-}
-
 interface Props {
-  notes: Note[];
+  notes: {
+    _id: string;
+    title: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+  }[];
   onDelete: (id: string | undefined) => void;
-  getForm: () => void;
 }
 
-const Notes: React.FC<Props> = ({ notes, onDelete, getForm }) => {
+const Notes: React.FC<Props> = ({ notes, onDelete }) => {
   const [currentPage, setCurrentPage] = useState<number>(0);
 
   const PER_PAGE: number = 3;
@@ -31,9 +28,9 @@ const Notes: React.FC<Props> = ({ notes, onDelete, getForm }) => {
   return (
     <>
       <div className="flex flex-col ">
-        {notes.slice(offset, offset + PER_PAGE).map((item: Note) => (
+        {notes.slice(offset, offset + PER_PAGE).map((item) => (
           <div key={item._id}>
-            <Note note={item} onDelete={onDelete} getForm={getForm} />
+            <Note note={item} onDelete={onDelete} />
           </div>
         ))}
       </div>

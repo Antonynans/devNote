@@ -25,7 +25,7 @@ const loginSchema = object({
 export type LoginInput = TypeOf<typeof loginSchema>;
 
 export default function Login() {
-  const loading = useSelector((state: RootState) => state.loaderslice);
+  const loading = useSelector((state: RootState) => state.loader);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

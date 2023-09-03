@@ -1,9 +1,13 @@
 import axios from "axios";
 import { RegisterInput } from "./CreateAccount";
 import { LoginInput } from "../pages/Login";
-import { GenericResponse, LoginResponse, VerifyInputs, VerifyResponse } from "../types";
+import { GenericResponse, LoginResponse, Note, VerifyInputs, VerifyResponse } from "../models/types";
+import { FormInput } from "./AddNotes";
 
-const base = "https://devnote-backend-jno6.onrender.com/api/";
+// const base = "https://devnote-backend-jno6.onrender.com/api/";
+const base = "http://localhost:8000/api/";
+
+const getToken = sessionStorage.getItem("saved_devnote");
 
 
 export const authApi = axios.create({
@@ -21,18 +25,35 @@ export const loginUserFn = async (user: LoginInput) => {
   return response.data;
 };
 
+export const addFormFn = async (form: FormInput) => {
+  const response = await authApi.post<Note>('create-form', form);
+  return response.data;
+};
+
+export const editFormFn = async (noteid: string | undefined, form: FormInput) => {
+  const response = await authApi.patch<Note>(`update-form/${noteid}`, form);
+  return response.data;
+};
+
 export const verifyUserFn = async (user: VerifyInputs) => {
   const response = await authApi.post<VerifyResponse>('verifyEmail', user);
   return response.data;
 };
 
+export const getForm = async () => {
+  const response = await authApi.get<Note>('getForm', 
+  {
+    headers: {
+      Authorization: `Bearer ${getToken}`,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    }}
+  );
+  return response.data;
+};
 
 export const Endpoints = {
   logout: base + "logout",
-
-  update_form: base + "update-form",
-
-  create_form: base + "create-form",
 
   getUsersById: base + "getUsersById",
 
@@ -41,8 +62,5 @@ export const Endpoints = {
   uploadImage: "https://api.cloudinary.com/v1_1/",
 
   delete_form: base + "delete-form",
-
-  get_form: base + "getForm",
-
 
 };

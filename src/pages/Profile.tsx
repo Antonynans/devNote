@@ -24,8 +24,7 @@ const Profile = () => {
     email: "",
     username: "",
     picture: "",
-    firstname: "",
-    lastname: "",
+    fullname: "",
   });
   const [modal, setModal] = useState(false);
   const [name, setName] = useState("");
@@ -56,7 +55,6 @@ const Profile = () => {
       await axios
         .patch(`${Endpoints.update_users}/${userDetails.user?._id}`, data)
         .then((res) => {
-          console.log(res.data);
           setUserData(res.data);
           toast.success("You have successfully updated a user!");
           setModal(false);
@@ -73,8 +71,6 @@ const Profile = () => {
     e.preventDefault();
     const file = e.currentTarget.files?.[0];
     const upload_name = import.meta.env.VITE_CLOUDINARY_NAME;
-
-    console.log(downloadUrl, "downloadUrl");
 
     if (!file) {
       toast.error("No file selected");
@@ -199,10 +195,7 @@ const Profile = () => {
               <p className="w-full">Username</p> <ButtonDiv name="username" />
             </div>
             <div className="flex items-center justify-between">
-              <p className="w-full">Firstname</p> <ButtonDiv name="firstname" />
-            </div>
-            <div className="flex items-center justify-between">
-              <p className="w-full">Lastname</p> <ButtonDiv name="lastname" />
+              <p className="w-full">Fullname</p> <ButtonDiv name="fullname" />
             </div>
             <div className="flex items-center justify-between">
               <p className="w-full">Email</p> <ButtonDiv name="email" />

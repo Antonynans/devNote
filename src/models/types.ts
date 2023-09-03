@@ -26,3 +26,11 @@ export interface VerifyInputs {
 export interface VerifyResponse {
   message: string,
 }
+
+export interface Note {
+  _id?: string;
+  title: string;
+  description: string;
+  createdAt?: string;
+  updatedAt?: string;
+}

@@ -35,7 +35,7 @@ const registerSchema = object({
 export type RegisterInput = TypeOf<typeof registerSchema>;
 
 const CreateAccount: React.FC<Props> = ({ setIsverify, setEmail }) => {
-  const loading = useSelector((state: RootState) => state.loaderslice);
+  const loading = useSelector((state: RootState) => state.loader);
 
   const dispatch = useDispatch();
 
@@ -56,8 +56,7 @@ const CreateAccount: React.FC<Props> = ({ setIsverify, setEmail }) => {
       onSuccess(data) {
         dispatch(getloaderstate(false));
         setIsverify(true);
-        console.log(data, 'data');
-        
+
         setEmail(data?.user?.email);
         toast.success("Check email address for OTP");
       },

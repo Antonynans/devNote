@@ -5,7 +5,7 @@ import { verifyUserFn } from "../Endpoints";
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { getloaderstate } from "../../store/slice/loaderstate";
-import { VerifyInputs } from "../../types";
+import { VerifyInputs } from "../../models/types";
 import { RootState } from "../../store/Store";
 
 interface Props {
@@ -20,7 +20,7 @@ const Verify: React.FC<Props> = ({ email, setIsWelcomePage }) => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const otpData = otp.join("");
 
-  const loading = useSelector((state: RootState) => state.loaderslice);
+  const loading = useSelector((state: RootState) => state.loader);
   const dispatch = useDispatch();
 
   const handleChangeOtp = (
@@ -96,7 +96,6 @@ const Verify: React.FC<Props> = ({ email, setIsWelcomePage }) => {
       otp: otpData,
       email: email,
     };
-    console.log(data, "data");
 
     if (otpData.length === 6) {
       verifyUser(data);
