@@ -4,8 +4,7 @@ import { LoginInput } from "../pages/Login";
 import { GenericResponse, LoginResponse, Note, VerifyInputs, VerifyResponse } from "../models/types";
 import { FormInput } from "./AddNotes";
 
-// const base = "https://devnote-backend-jno6.onrender.com/api/";
-const base = "http://localhost:8000/api/";
+const base = "https://devnote-backend-jno6.onrender.com/api/";
 
 const getToken = sessionStorage.getItem("saved_devnote");
 
