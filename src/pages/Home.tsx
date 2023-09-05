@@ -6,7 +6,7 @@ import axios from "axios";
 import Loader from "../components/whiteloader";
 import { toast } from "react-toastify";
 import Header from "../components/Header";
-import { Endpoints, getFormById } from "../components/Endpoints";
+import { Endpoints, getFormUserById } from "../components/Endpoints";
 import { useQuery } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { getForms } from "../store/slice/getForm";
@@ -57,12 +57,11 @@ export default function Home() {
 
   const userId = userDetails.user?._id;
 
-  const data = getFormById(userId);
-  console.log(data);
+ 
 
   const { isLoading, isError } = useQuery(
     ["getData", userId],
-    () => getFormById(userId),
+    () => getFormUserById(userId),
     {
       onSuccess: (data: [Note]) => {
         dispatch(getForms(data));
@@ -88,9 +87,8 @@ export default function Home() {
         (note: { _id: string | undefined }) => note._id !== id
       );
       dispatch(getForms(deleteNotes));
-      toast.success("You have successfully deleted a note!");
       await axios.delete(`${Endpoints.delete_form}/${id}`).then(() => {
-        console.log("Form deleted successfully");
+        toast.success("You have successfully deleted a note!");
       });
     } catch (err) {
       console.log(err);

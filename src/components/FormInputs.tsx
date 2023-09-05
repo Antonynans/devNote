@@ -6,6 +6,7 @@ type Props = {
   name: string;
   type?: string;
   className?: string;
+  value?: string;
 };
 
 const FormInputs: React.FC<Props> = ({
@@ -13,6 +14,7 @@ const FormInputs: React.FC<Props> = ({
   name,
   type = "text",
   className,
+  value,
 }) => {
   const {
     register,
@@ -23,13 +25,19 @@ const FormInputs: React.FC<Props> = ({
       {type === "textarea" ? (
         <textarea
           placeholder={label}
-          className="w-full min-h-40 overflow-auto px-6 outline-none  rounded-[5px] cursor-text"
+          defaultValue={value}
+          className={`${
+            className
+              ? className
+              : "w-full overflow-auto outline-none rounded-[5px] cursor-text"
+          }`}
           {...register(name)}
         />
       ) : (
         <input
           type={type}
           placeholder={label}
+          defaultValue={value}
           className={`${
             className
               ? className

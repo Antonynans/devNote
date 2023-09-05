@@ -15,6 +15,8 @@ import { useMutation } from "@tanstack/react-query";
 const loginSchema = object({
   email: string()
     .min(1, "Email address is required")
+    .toLowerCase()
+    .trim()
     .email("Email Address is invalid"),
   password: string()
     .min(1, "Password is required")

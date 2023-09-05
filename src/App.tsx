@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import { useSelector } from "react-redux";
 import { RootState } from "./store/Store";
 import Profile from "./pages/Profile";
+import Forms from "./pages/Forms";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -39,6 +40,14 @@ const App = () => {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/form/:formId"
+          element={
+            <ProtectedRoute>
+              <Forms />
             </ProtectedRoute>
           }
         />

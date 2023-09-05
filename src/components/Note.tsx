@@ -3,14 +3,13 @@ import { Menu, Transition } from "@headlessui/react";
 import dots from "../assets/dots.svg";
 import AddNotes from "./AddNotes";
 import Modal from "react-modal";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   note: {
     _id: string;
     title: string;
     description: string;
-    createdAt: string;
-    updatedAt: string;
   };
   onDelete: (id: string | undefined) => void;
 }
@@ -26,22 +25,14 @@ const Note: React.FC<Props> = ({ note, onDelete }) => {
     setEditModal(false);
   };
 
-  const convertDate = (dateString: string): string => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      hour12: true,
-      minute: "numeric",
-      second: "numeric",
-    };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="border border-[#00000024] rounded-[5px] flex relative justify-between p-6 mt-8">
-      <div className="w-full">
+      <div
+        className="w-full cursor-pointer"
+        onClick={() => navigate(`/form/${note._id}`)}
+      >
         <p className="text-lg capitalize mb-6">{note.title}</p>
         <p className="roboto text-[#000000BA] font-light ">
           {" "}
@@ -49,22 +40,6 @@ const Note: React.FC<Props> = ({ note, onDelete }) => {
             ? `${note.description.substring(0, 140)}...`
             : note.description}
         </p>
-        <div className="flex flex-col">
-          <span className="flex items-center gap-2 pt-8">
-            <button className="bg-[#FA9F5E] rounded-[25px] text-xs px-2 py-1 text-white">
-              Created
-            </button>
-            <p className="text-xs">{convertDate(note?.createdAt)}</p>
-          </span>
-          {note.updatedAt && (
-            <span className="flex items-center gap-2 pt-4">
-              <button className="bg-[#FA9F5E] rounded-[25px] text-xs px-2 py-1 text-white">
-                Last updated
-              </button>
-              <p className="text-xs">{convertDate(note?.updatedAt)}</p>
-            </span>
-          )}
-        </div>
       </div>
 
       <div>

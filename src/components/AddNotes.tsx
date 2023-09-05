@@ -112,7 +112,7 @@ const AddNotes: React.FC<Props> = ({ setModal, isEdit, noteId }) => {
           />
           <img src={line} alt="" className="mb-2 mt-3 w-full" />
           <FormInputs
-            className="w-full min-h-14 max-h-40 overflow-auto px-6 outline-none  rounded-[5px] cursor-text"
+            className="w-full min-h-14 max-h-40 overflow-auto px-6 outline-none rounded-[5px] cursor-text"
             label="| Description"
             name="description"
             type="textarea"

@@ -12,6 +12,7 @@ import { Endpoints } from "../components/Endpoints";
 import { UserData } from "../models/UserData";
 import { useFetchUserData } from "../hooks/useFetchData";
 import book from "/book.svg";
+import { FaArrowLeft } from "react-icons/fa";
 
 interface ButtonDivProps {
   name: string | keyof UserData;
@@ -95,7 +96,6 @@ const Profile = () => {
         .post(`${Endpoints.uploadImage}${upload_name}/image/upload`, formData)
         .then((response) => {
           downloadUrl = response.data.secure_url;
-          // toast.success('success')
         })
         .catch((err) => {
           console.log(err);
@@ -156,7 +156,8 @@ const Profile = () => {
     <>
       <div className="w-full h-screen flex justify-center bg-[#E5E5E5]">
         <div className="flex flex-col h-screen relative w-[500px] bg-white overflow-y-auto pb-20 px-8">
-          <header className="flex items-center ">
+          <header className="flex items-center justify-between">
+          
             <div
               className="flex cursor-pointer items-center gap-4 my-12 "
               onClick={() => navigate("/")}
@@ -164,6 +165,9 @@ const Profile = () => {
               <img src={book} alt="book" />
               <p className="text-lg roboto">DevNote</p>
             </div>
+            <button onClick={() => navigate(-1)}>
+                    <FaArrowLeft />
+                  </button>
           </header>
           <div className="flex  justify-between items-center">
             <div className="flex justify-between items-baseline pb-8">
@@ -190,12 +194,12 @@ const Profile = () => {
           </div>
 
           <div>
-            <p>User Information</p>
+            <p className="text-base roboto pb-4">User Information</p>
             <div className="flex items-center justify-between">
               <p className="w-full">Username</p> <ButtonDiv name="username" />
             </div>
             <div className="flex items-center justify-between">
-              <p className="w-full">Fullname</p> <ButtonDiv name="fullname" />
+              <p className="w-full">Full name</p> <ButtonDiv name="fullname" />
             </div>
             <div className="flex items-center justify-between">
               <p className="w-full">Email</p> <ButtonDiv name="email" />
