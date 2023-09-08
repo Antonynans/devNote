@@ -104,7 +104,7 @@ const AddNotes: React.FC<Props> = ({ setModal, isEdit, noteId }) => {
   return (
     <>
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmitHandler)} className="">
+        <form onSubmit={handleSubmit(onSubmitHandler)} className="max-h-[30rem]">
           <FormInputs
             className="h-14 w-full rounded-[5px] outline-none px-6"
             label="| Title"
@@ -112,13 +112,13 @@ const AddNotes: React.FC<Props> = ({ setModal, isEdit, noteId }) => {
           />
           <img src={line} alt="" className="mb-2 mt-3 w-full" />
           <FormInputs
-            className="w-full min-h-14 max-h-40 overflow-auto px-6 outline-none rounded-[5px] cursor-text"
+            className="w-full resize-none overflow-auto block h-auto px-6 outline-none rounded-[5px] cursor-text"
             label="| Description"
             name="description"
             type="textarea"
           />
 
-          <div className="flex justify-end pr-6 mt-8">
+          <div className="flex justify-end pr-6 mt-8 pb-12">
             <button className="bg-[#FB6900] text-white px-6 py-2 rounded-[5px] ">
               {isEdit ? "Modify" : "Save"}
             </button>

@@ -20,16 +20,24 @@ const FormInputs: React.FC<Props> = ({
     register,
     formState: { errors },
   } = useFormContext();
+
+  const autoResize = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    event.target.style.height = "auto";
+    event.target.style.height = event.target.scrollHeight + "px";
+  };
+
   return (
     <div className="flex flex-col gap-4">
       {type === "textarea" ? (
         <textarea
           placeholder={label}
           defaultValue={value}
+          onFocus={autoResize}
+          onInput={autoResize}
           className={`${
             className
               ? className
-              : "w-full overflow-auto outline-none rounded-[5px] cursor-text"
+              : "w-full overflow-hidden block resize-none h-auto outline-none rounded-[5px] cursor-text"
           }`}
           {...register(name)}
         />

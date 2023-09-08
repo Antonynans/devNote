@@ -59,7 +59,7 @@ const Forms = () => {
       onSuccess() {
         dispatch(getloaderstate(false));
         queryClient.invalidateQueries(["getData"]);
-
+        queryClient.invalidateQueries(["getFormDataById"]);
         toast.success("You have successfully updated a note!");
       },
       onError(err) {
@@ -128,13 +128,13 @@ const Forms = () => {
                 <FormProvider {...methods}>
                   <form onSubmit={handleSubmit(onSubmitHandler)} className="">
                     <FormInputs
-                      className="h-14 w-full rounded-[5px] outline-none text-lg capitalize mb-6"
+                      className="h-14 w-full rounded-[5px] outline-none text-lg capitalize mb-6 hover:bg-gray-50"
                       label=""
                       name="title"
                       value={note?.title}
                     />
                     <FormInputs
-                      className="w-full h-24 roboto text-[#000000BA] font-light overflow-auto outline-none rounded-[5px] cursor-text"
+                      className="w-full h-auto resize-none roboto text-[#000000BA] font-light overflow-hidden outline-none rounded-[5px] cursor-text hover:bg-gray-50"
                       label=""
                       name="description"
                       value={note?.description}
@@ -158,15 +158,15 @@ const Forms = () => {
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-2">
+                <div className="md:flex items-center justify-between">
+                  <span className="flex items-center gap-2 pb-2">
                     <button className="bg-[#FA9F5E] rounded-[25px] text-[8px] px-2 py-1 text-white">
                       Created
                     </button>
                     <p className="text-[8px]">{convertDate(note?.createdAt)}</p>
                   </span>
                   {note?.updatedAt && (
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-2 pb-2">
                       <button className="bg-[#FA9F5E] rounded-[25px] text-[8px] px-2 py-1 text-white">
                         Last updated
                       </button>

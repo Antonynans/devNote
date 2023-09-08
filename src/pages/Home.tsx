@@ -57,8 +57,6 @@ export default function Home() {
 
   const userId = userDetails.user?._id;
 
- 
-
   const { isLoading, isError } = useQuery(
     ["getData", userId],
     () => getFormUserById(userId),
@@ -103,7 +101,9 @@ export default function Home() {
         </div>
       ) : (
         <>
-          {!isLoading ? (
+          {isLoading ? (
+            <Loader />
+          ) : (
             <div className="w-full h-screen flex justify-center bg-[#E5E5E5]">
               <main className="flex flex-col h-screen relative w-[500px] bg-white overflow-y-auto pb-20">
                 <div>
@@ -137,8 +137,6 @@ export default function Home() {
                 </footer>
               </main>
             </div>
-          ) : (
-            <Loader />
           )}
         </>
       )}
@@ -155,7 +153,7 @@ export default function Home() {
             zIndex: 100,
           },
         }}
-        className="absolute top-[100px] mx-4 rounded-[5px] lg:top-auto mt-[30vh] left-0 lg:left-[35%] lg:right-[35%] right-0 h-auto pb-12 overflow-y-auto overflow-auto bg-[#FFFDFD] z-50 outline-none border-0 flex flex-col justify-between shadow-[5px_5px_30px_0px_#00000040]"
+        className="absolute top-[100px] mx-auto rounded-[5px] left-0 right-0 md:w-[500px] h-auto overflow-y-auto overflow-auto bg-[#FFFDFD] z-50 outline-none border-0 flex flex-col justify-between shadow-[5px_5px_30px_0px_#00000040]"
         isOpen={modal}
         onRequestClose={closeModal}
         ariaHideApp={false}
